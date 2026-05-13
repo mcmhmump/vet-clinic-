@@ -50,6 +50,15 @@ public class Owner {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+
+    public List<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
+
     @Override
     public String toString() {
         return "Owner{id=" + id + ", name='" + name + "', surname='" + surname + "'}";
