@@ -10,9 +10,10 @@ public class Pet {
     private String name;
     private String animalType;
     public Pet(){}
-    public Pet(String name, String animalType){
+    public Pet(String name, String animalType, Owner owner){
         this.name=name;
         this.animalType=animalType;
+        this.owner=owner;
     }
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -40,8 +41,17 @@ public class Pet {
     public void setAnimalType(String animalType) {
         this.animalType = animalType;
     }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
     @Override
     public String toString() {
-        return "Owner{id=" + id + ", name='" + name + "', animal="+animalType+ "}";
+        return "Pet{id=" + id + ", name='" + name + "', animal="+animalType+ "}";
     }
 }

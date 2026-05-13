@@ -12,9 +12,11 @@ public class Appointment {
     private LocalDateTime appointmentDate;
     private String diagnosis;
     public Appointment(){}
-    public Appointment(LocalDateTime appointmentDate, String diagnosis){
+    public Appointment(LocalDateTime appointmentDate, String diagnosis, Pet pet, Doctor doctor){
         this.appointmentDate=appointmentDate;
         this.diagnosis=diagnosis;
+        this.pet=pet;
+        this.doctor=doctor;
     }
     @ManyToOne
     @JoinColumn(name = "pet_id")
@@ -47,6 +49,22 @@ public class Appointment {
     public void setDiagnosis(String diagnosis) {
         this.diagnosis = diagnosis;
     }
+    public void setPet(Pet pet){
+        this.pet=pet;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
     @Override
     public String toString() {
         return "Appointment{id=" + id + ", date='" + appointmentDate + "', diagnos="+diagnosis+ "}";
