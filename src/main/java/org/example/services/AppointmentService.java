@@ -9,6 +9,7 @@ import org.example.repository.PetRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 @Service
 public class AppointmentService {
@@ -22,28 +23,44 @@ public class AppointmentService {
         this.doctorRepo = doctorRepo;
     }
 
-    public void addAppointment(LocalDateTime date, String diagnosis, Long petId, Long doctorId) {
+    public Appointment addAppointment(LocalDateTime date, String diagnosis, Long petId, Long doctorId) {
         Pet pet = petRepo.findById(petId).orElse(null);
         Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
 
         if (pet != null && doctor != null) {
-            appointmentRepo.save(new Appointment(date, diagnosis, pet, doctor));
+            Appointment appointment = new Appointment(date, diagnosis, pet, doctor);
+            return appointmentRepo.save(appointment);
         }
+
+        return null;
     }
 
     public Iterable<Appointment> getAllAppointments() {
         return appointmentRepo.findAll();
     }
 
+    public Appointment getAppointmentById(Long id) {
+        return appointmentRepo.findById(id).orElse(null);
+    }
+
     public void deleteAppointment(Long id) {
         appointmentRepo.deleteById(id);
     }
 
-    public void changeAppointmentDiagnosis(Long appointmentId, String newDiagnosis) {
+    public Appointment changeAppointmentDiagnosis(Long appointmentId, String newDiagnosis) {
         Appointment appointment = appointmentRepo.findById(appointmentId).orElse(null);
         if (appointment != null && newDiagnosis != null) {
             appointment.setDiagnosis(newDiagnosis);
-            appointmentRepo.save(appointment);
+            return appointmentRepo.save(appointment);
         }
+        return null;
+    }
+
+    public Stream<Appointment> getAppointmentsByDoctorId(Long doctorId) {
+        return appointmentRepo.findByDoctorId(doctorId);
+    }
+
+    public Stream<Appointment> getAppointmentsByPetId(Long petId) {
+        return appointmentRepo.findByPetId(petId);
     }
 }
