@@ -12,23 +12,29 @@ public class DoctorService {
         this.doctorRepo = doctorRepo;
     }
 
-    public void addDoctor(String name, String surname, String specialty) {
-        doctorRepo.save(new Doctor(name, surname, specialty));
+    public Doctor addDoctor(String name, String surname, String specialty) {
+        Doctor doctor = new Doctor(name, surname, specialty);
+        return doctorRepo.save(doctor);
     }
 
     public Iterable<Doctor> getAllDoctors() {
         return doctorRepo.findAll();
     }
 
+    public Doctor getDoctorById(Long id) {
+        return doctorRepo.findById(id).orElse(null);
+    }
+
     public void deleteDoctor(Long id) {
         doctorRepo.deleteById(id);
     }
 
-    public void changeDoctorSpecialty(Long doctorId, String newSpecialty) {
+    public Doctor changeDoctorSpecialty(Long doctorId, String newSpecialty) {
         Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
         if (doctor != null && newSpecialty != null) {
             doctor.setSpecialty(newSpecialty);
-            doctorRepo.save(doctor);
+            return doctorRepo.save(doctor);
         }
+        return null;
     }
 }

@@ -12,23 +12,29 @@ public class OwnerService {
         this.ownerRepo = ownerRepo;
     }
 
-    public void addOwner(String name, String phoneNumber, String surname) {
-        ownerRepo.save(new Owner(name, phoneNumber, surname));
+    public Owner addOwner(String name, String phoneNumber, String surname) {
+        Owner owner = new Owner(name, phoneNumber, surname);
+        return ownerRepo.save(owner);
     }
 
     public Iterable<Owner> getAllOwners() {
         return ownerRepo.findAll();
     }
 
+    public Owner getOwnerById(Long id) {
+        return ownerRepo.findById(id).orElse(null);
+    }
+
     public void deleteOwner(Long id) {
         ownerRepo.deleteById(id);
     }
 
-    public void changeOwnerPhoneNumber(Long ownerId, String newPhoneNumber) {
+    public Owner changeOwnerPhoneNumber(Long ownerId, String newPhoneNumber) {
         Owner owner = ownerRepo.findById(ownerId).orElse(null);
         if (owner != null && newPhoneNumber != null) {
             owner.setPhoneNumber(newPhoneNumber);
-            ownerRepo.save(owner);
+            return ownerRepo.save(owner);
         }
+        return null;
     }
 }
