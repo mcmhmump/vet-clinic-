@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.OwnerRequest;
 import org.example.dto.OwnerResponse;
 import org.example.mapper.OwnerMapper;
@@ -21,7 +22,7 @@ public class OwnerController {
     }
 
     @PostMapping
-    public OwnerResponse addOwner(@RequestBody OwnerRequest request) {
+    public OwnerResponse addOwner(@Valid @RequestBody OwnerRequest request) {
         Owner owner = ownerService.addOwner(
                 request.getName(),
                 request.getPhoneNumber(),

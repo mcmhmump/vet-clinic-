@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.PetRequest;
 import org.example.dto.PetResponse;
 import org.example.mapper.PetMapper;
@@ -21,7 +22,7 @@ public class PetController {
     }
 
     @PostMapping
-    public PetResponse addPet(@RequestBody PetRequest request) {
+    public PetResponse addPet(@Valid @RequestBody PetRequest request) {
         Pet pet = petService.addPet(
                 request.getName(),
                 request.getAnimalType(),

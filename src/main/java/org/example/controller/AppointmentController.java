@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.AppointmentRequest;
 import org.example.dto.AppointmentResponse;
 import org.example.mapper.AppointmentMapper;
@@ -21,7 +22,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public AppointmentResponse addAppointment(@RequestBody AppointmentRequest request) {
+    public AppointmentResponse addAppointment(@Valid @RequestBody AppointmentRequest request) {
         Appointment appointment = appointmentService.addAppointment(
                 request.getAppointmentDate(),
                 request.getDiagnosis(),

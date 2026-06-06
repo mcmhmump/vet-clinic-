@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.DoctorRequest;
 import org.example.dto.DoctorResponse;
 import org.example.mapper.DoctorMapper;
@@ -21,7 +22,7 @@ public class DoctorController {
     }
 
     @PostMapping
-    public DoctorResponse addDoctor(@RequestBody DoctorRequest request) {
+    public DoctorResponse addDoctor(@Valid @RequestBody DoctorRequest request) {
         Doctor doctor = doctorService.addDoctor(
                 request.getName(),
                 request.getSurname(),
