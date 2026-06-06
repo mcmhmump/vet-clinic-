@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Doctor;
 import org.example.repository.DoctorRepo;
 import org.springframework.stereotype.Service;
@@ -22,19 +23,25 @@ public class DoctorService {
     }
 
     public Doctor getDoctorById(Long id) {
-        return doctorRepo.findById(id).orElse(null);
+        return doctorRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Доктор с id=" + id + " не найден"));
     }
 
     public void deleteDoctor(Long id) {
+        if (!doctorRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Доктор с id=" + id + " не найден");
+        }
         doctorRepo.deleteById(id);
     }
 
     public Doctor changeDoctorSpecialty(Long doctorId, String newSpecialty) {
-        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
-        if (doctor != null && newSpecialty != null) {
-            doctor.setSpecialty(newSpecialty);
-            return doctorRepo.save(doctor);
+        Doctor doctor = getDoctorById(doctorId);
+
+        if (newSpecialty == null || newSpecialty.trim().isEmpty()) {
+            throw new IllegalArgumentException("Специальность не может быть пустой");
         }
-        return null;
+
+        doctor.setSpecialty(newSpecialty);
+        return doctorRepo.save(doctor);
     }
 }

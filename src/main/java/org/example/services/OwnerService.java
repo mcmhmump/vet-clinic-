@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Owner;
 import org.example.repository.OwnerRepo;
 import org.springframework.stereotype.Service;
@@ -22,19 +23,25 @@ public class OwnerService {
     }
 
     public Owner getOwnerById(Long id) {
-        return ownerRepo.findById(id).orElse(null);
+        return ownerRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Владелец с id=" + id + " не найден"));
     }
 
     public void deleteOwner(Long id) {
+        if (!ownerRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Владелец с id=" + id + " не найден");
+        }
         ownerRepo.deleteById(id);
     }
 
     public Owner changeOwnerPhoneNumber(Long ownerId, String newPhoneNumber) {
-        Owner owner = ownerRepo.findById(ownerId).orElse(null);
-        if (owner != null && newPhoneNumber != null) {
-            owner.setPhoneNumber(newPhoneNumber);
-            return ownerRepo.save(owner);
+        Owner owner = getOwnerById(ownerId);
+
+        if (newPhoneNumber == null || newPhoneNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Номер телефона не может быть пустым");
         }
-        return null;
+
+        owner.setPhoneNumber(newPhoneNumber);
+        return ownerRepo.save(owner);
     }
 }
