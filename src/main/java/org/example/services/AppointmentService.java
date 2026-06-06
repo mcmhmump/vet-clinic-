@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Appointment;
 import org.example.model.Doctor;
 import org.example.model.Pet;
@@ -24,15 +25,14 @@ public class AppointmentService {
     }
 
     public Appointment addAppointment(LocalDateTime date, String diagnosis, Long petId, Long doctorId) {
-        Pet pet = petRepo.findById(petId).orElse(null);
-        Doctor doctor = doctorRepo.findById(doctorId).orElse(null);
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new ResourceNotFoundException("Питомец с id=" + petId + " не найден"));
 
-        if (pet != null && doctor != null) {
-            Appointment appointment = new Appointment(date, diagnosis, pet, doctor);
-            return appointmentRepo.save(appointment);
-        }
+        Doctor doctor = doctorRepo.findById(doctorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Доктор с id=" + doctorId + " не найден"));
 
-        return null;
+        Appointment appointment = new Appointment(date, diagnosis, pet, doctor);
+        return appointmentRepo.save(appointment);
     }
 
     public Iterable<Appointment> getAllAppointments() {
@@ -40,20 +40,26 @@ public class AppointmentService {
     }
 
     public Appointment getAppointmentById(Long id) {
-        return appointmentRepo.findById(id).orElse(null);
+        return appointmentRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Прием с id=" + id + " не найден"));
     }
 
     public void deleteAppointment(Long id) {
+        if (!appointmentRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Прием с id=" + id + " не найден");
+        }
         appointmentRepo.deleteById(id);
     }
 
     public Appointment changeAppointmentDiagnosis(Long appointmentId, String newDiagnosis) {
-        Appointment appointment = appointmentRepo.findById(appointmentId).orElse(null);
-        if (appointment != null && newDiagnosis != null) {
-            appointment.setDiagnosis(newDiagnosis);
-            return appointmentRepo.save(appointment);
+        Appointment appointment = getAppointmentById(appointmentId);
+
+        if (newDiagnosis == null || newDiagnosis.trim().isEmpty()) {
+            throw new IllegalArgumentException("Новый диагноз не может быть пустым");
         }
-        return null;
+
+        appointment.setDiagnosis(newDiagnosis);
+        return appointmentRepo.save(appointment);
     }
 
     public Stream<Appointment> getAppointmentsByDoctorId(Long doctorId) {

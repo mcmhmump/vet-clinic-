@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.exception.ResourceNotFoundException;
 import org.example.model.Owner;
 import org.example.model.Pet;
 import org.example.repository.OwnerRepo;
@@ -17,14 +18,11 @@ public class PetService {
     }
 
     public Pet addPet(String name, String animalType, Long ownerId) {
-        Owner owner = ownerRepo.findById(ownerId).orElse(null);
+        Owner owner = ownerRepo.findById(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Владелец с id=" + ownerId + " не найден"));
 
-        if (owner != null) {
-            Pet pet = new Pet(name, animalType, owner);
-            return petRepo.save(pet);
-        }
-
-        return null;
+        Pet pet = new Pet(name, animalType, owner);
+        return petRepo.save(pet);
     }
 
     public Iterable<Pet> getAllPets() {
@@ -32,7 +30,8 @@ public class PetService {
     }
 
     public Pet getPetById(Long id) {
-        return petRepo.findById(id).orElse(null);
+        return petRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Питомец с id=" + id + " не найден"));
     }
 
     public void deletePet(Long id) {
